@@ -76,7 +76,7 @@
       <div class="logo logo-glitch"><img src="images.jpg" alt="DedSec logo"></div>
       <div>
         <h1>DedSec — Practical OPSEC (High-Level) <span class="emblem"><img src="images.jpg" alt="emblem"></span></h1>
-        <p class="lead">Made by ClosetCheater67,CCStudios.</p>
+        <p class="lead">A clean, black & white inspired one-page guide with DedSec vibes. High-level privacy & security practices — legal & ethical.</p>
       </div>
     </header>
 
@@ -219,15 +219,20 @@
   <div class="modal-backdrop" id="modal">
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <h3 id="modalTitle">Download dedsec.exe</h3>
-      <p>Wanna have the Best Opsec? <strong>dedsec.exe</strong>. We Gotchu,our dedsec apps help u protect ur pc and stop people from tampering ur PC.</p>
+      <p>You're about to download an executable file named <strong>dedsec.exe</strong>. Only continue if you trust the source. Executables can contain software that may be harmful. For fewer browser warnings, consider hosting a ZIP instead (e.g., dedsec.zip).</p>
       <div class="row">
         <button class="btn-ghost" id="cancelModal">Cancel</button>
-        <button class="btn-danger" id="confirmDownload">Download</button>
+        <button class="btn-danger" id="confirmDownload">Proceed to download</button>
       </div>
     </div>
   </div>
 
   <script>
+    // ---- CONFIG: put your MediaFire share link here ----
+    // Example: 'https://www.mediafire.com/file/abc12345xyz/dedsec.exe/file'
+    // Replace the placeholder below with your actual MediaFire URL.
+    const mediafireUrl = 'https://www.mediafire.com/file/REPLACE_WITH_YOUR_LINK';
+
     // reveal on scroll
     const reveals = document.querySelectorAll('.reveal');
     const io = new IntersectionObserver(entries => {
@@ -255,9 +260,8 @@
     const confirmDownload = document.getElementById('confirmDownload');
 
     downloadBtn.addEventListener('click', ()=> {
-      // open confirmation modal
+      // show modal
       modal.style.display = 'flex';
-      // focus for accessibility
       confirmDownload.focus();
     });
 
@@ -268,14 +272,18 @@
     confirmDownload.addEventListener('click', ()=> {
       modal.style.display = 'none';
 
-      // Build a temporary anchor that points to dedsec.exe in same folder.
-      // Make sure dedsec.exe is present in the same directory on your server/repo.
-      const a = document.createElement('a');
-      a.href = './dedsec.exe';         // <-- file name to download (must exist on server)
-      a.download = 'dedsec.exe';       // forces download filename (may be ignored by some browsers)
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      if (mediafireUrl && mediafireUrl.trim() !== '' && !mediafireUrl.includes('REPLACE_WITH_YOUR_LINK')) {
+        // Open MediaFire link in new tab (MediaFire will handle the large download)
+        window.open(mediafireUrl, '_blank', 'noopener');
+      } else {
+        // Fallback: attempt local download (dedsec.exe must be present in same folder)
+        const a = document.createElement('a');
+        a.href = './dedsec.exe';
+        a.download = 'dedsec.exe';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
     });
 
     // close modal when clicking backdrop (optional)
