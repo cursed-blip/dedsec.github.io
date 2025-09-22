@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DedSec — Practical OPSEC Guide</title>
+  <style>
+    :root{
+      --bg:#000000; --card:#0f0f0f; --muted:#9ca3af; --accent:#ffffff; --glass: rgba(255,255,255,0.04);
+      --radius:14px; --maxw:1100px; --glass-2: rgba(255,255,255,0.02);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background: #000000;
+      color:#e5e5e5; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      line-height:1.45; -webkit-tap-highlight-color:transparent;
+      padding:48px 24px;
+      display:flex; justify-content:center;
+    }
+    .wrap{max-width:var(--maxw); width:100%;}
+    header{display:flex;align-items:center;gap:18px;margin-bottom:28px}
+    .logo{width:64px;height:64px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(255,255,255,0.06);background:linear-gradient(135deg,var(--accent),#555555)}
+    .logo img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(100%) contrast(120%);}
+    .emblem{width:28px;height:28px;border-radius:8px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:10px}
+    .emblem img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%) contrast(120%)}
+    h1{margin:0;font-size:22px;letter-spacing:0.2px}
+    p.lead{margin:0;color:var(--muted)}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:24px}
+    main{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:22px;border-radius:var(--radius);backdrop-filter: blur(6px);}
+    aside{position:sticky; top:48px;height:fit-content;padding:18px;background:var(--card);border-radius:12px}
+    .section{margin-bottom:20px}
+    .hero{display:flex;flex-direction:column;gap:12px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass);color:var(--accent);font-weight:600;font-size:13px}
+    h2{margin:8px 0 6px}
+    .muted{color:var(--muted);font-size:14px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .card{background:var(--glass-2);padding:14px;border-radius:12px;min-height:100px;transition:transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s;}
+    .card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(255,255,255,0.1)}
+    .card h3{margin:0 0 6px;font-size:16px}
+    .card p{margin:0;color:var(--muted);font-size:13px}
+    .controls{display:flex;gap:8px;align-items:center}
+    .btn{background:linear-gradient(90deg,var(--accent),#555555);border:none;padding:9px 12px;border-radius:10px;color:#000000;font-weight:700;cursor:pointer}
+    .outline{background:transparent;border:1px solid rgba(255,255,255,0.15);padding:9px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+    .download-cta{display:flex;justify-content:center;margin-top:18px}
+    .download-cta .big{background:#ffffff;color:#000;padding:14px 18px;border-radius:12px;font-weight:800;cursor:pointer;border:none;letter-spacing:0.6px}
+    .list{display:flex;flex-direction:column;gap:10px}
+    .list-row{display:flex;gap:12px;align-items:flex-start}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:6px}
+    footer{margin-top:18px;color:var(--muted);font-size:13px;text-align:center}
+    @media (max-width:980px){.grid{grid-template-columns:1fr;}.logo{width:52px;height:52px}.emblem{display:none}}
+    .reveal{opacity:0;transform:translateY(14px);transition:all .6s cubic-bezier(.2,.9,.3,1)}
+    .reveal.visible{opacity:1;transform:none}
+    pre.snip{background:#0a0a0a;padding:10px;border-radius:8px;color:#ffffff;overflow:auto;font-size:13px}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:50}
+    .modal{background:#0b0b0b;border:1px solid rgba(255,255,255,0.06);padding:18px;border-radius:12px;max-width:480px;width:92%;box-shadow:0 20px 50px rgba(0,0,0,0.8);color:#e9e9e9}
+    .modal h3{margin:0 0 8px}
+    .modal p{margin:0 0 12px;color:var(--muted)}
+    .modal .row{display:flex;gap:8px;justify-content:flex-end}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.12);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
+    .btn-danger{background:#fff;color:#000;padding:9px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+
+    /* subtle glitch logo effect */
+    .logo-glitch{position:relative;display:inline-block}
+    .logo-glitch::before,.logo-glitch::after{content:'';position:absolute;inset:0;background:inherit;mix-blend-mode:screen;opacity:0;transition:opacity .12s linear}
+    @keyframes flick {0%{opacity:.0}50%{opacity:.12}100%{opacity:0}}
+    .logo-glitch:hover::before{animation:flick .22s linear}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo logo-glitch"><img src="images.jpg" alt="DedSec logo"></div>
+      <div>
+        <h1>DedSec — Practical OPSEC (High-Level) <span class="emblem"><img src="images.jpg" alt="emblem"></span></h1>
+        <p class="lead">Made by ClosetCheater67,CCStudios.</p>
+      </div>
+    </header>
+
+    <div class="grid">
+      <main>
+        <section class="section hero reveal" id="intro">
+          <span class="pill">Fictional • Educational</span>
+          <h2>About this guide</h2>
+          <p class="muted">This page presents high-level operational security (OPSEC) ideas focused on privacy hygiene, threat modeling, and safety. It intentionally <strong>does not</strong> provide instructions to commit wrongdoing, bypass law enforcement, or hack systems illegally. Follow laws and act ethically.</p>
+        </section>
+
+        <section class="section reveal" id="principles">
+          <h2>Core OPSEC Principles</h2>
+          <div class="cards">
+            <article class="card">
+              <h3>Threat Modeling</h3>
+              <p>Know who or what you're protecting information from. Different threats require different controls.</p>
+            </article>
+            <article class="card">
+              <h3>Least Privilege</h3>
+              <p>Only give accounts or apps the permissions they need. Reduce exposure surface.</p>
+            </article>
+            <article class="card">
+              <h3>Defense in Depth</h3>
+              <p>Multiple layers of protection — physical, device, network, and account layers work together.</p>
+            </article>
+            <article class="card">
+              <h3>Fail-Safe Habits</h3>
+              <p>Make secure choices the default: updates, backups, strong passwords, and multi-factor authentication.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section reveal" id="hygiene">
+          <h2>Digital Hygiene</h2>
+          <div class="list">
+            <div class="list-row"><div class="dot"></div><div><strong>Passwords & Accounts</strong><p class="muted">Use a reputable password manager to create unique, long passwords for each account. Avoid reusing passwords.</p></div></div>
+            <div class="list-row"><div class="dot"></div><div><strong>Multi-Factor Authentication</strong><p class="muted">Enable MFA everywhere possible — use hardware keys or authenticator apps where supported.</p></div></div>
+            <div class="list-row"><div class="dot"></div><div><strong>Keep Software Updated</strong><p class="muted">OS, apps, browsers, and firmware updates often patch security bugs. Install updates promptly.</p></div></div>
+            <div class="list-row"><div class="dot"></div><div><strong>Backups</strong><p class="muted">Keep encrypted backups of important data. Test restores so backups are actually usable.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="devices">
+          <h2>Device Security</h2>
+          <div class="cards">
+            <article class="card">
+              <h3>Full Disk Encryption</h3>
+              <p class="muted">Encrypt devices using built-in tools (e.g., BitLocker, FileVault) to protect data if a device is lost or stolen.</p>
+            </article>
+            <article class="card">
+              <h3>Secure Boot & TPM</h3>
+              <p class="muted">Where available, use secure boot and hardware-backed keys to increase resistance to tampering.</p>
+            </article>
+            <article class="card">
+              <h3>Compartmentalize</h3>
+              <p class="muted">Separate sensitive tasks from daily browsing. Use dedicated profiles or devices for high-risk activities.</p>
+            </article>
+            <article class="card">
+              <h3>App Hygiene</h3>
+              <p class="muted">Install apps only from trusted sources and review requested permissions critically.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section reveal" id="network">
+          <h2>Network & Browsing</h2>
+          <div class="list">
+            <div class="list-row"><div class="dot"></div><div><strong>Use HTTPS & Privacy-Friendly Browsers</strong><p class="muted">Prefer sites with HTTPS. Consider privacy-respecting browser settings and extensions that block trackers.</p></div></div>
+            <div class="list-row"><div class="dot"></div><div><strong>VPNs & Proxies — Know the Limits</strong><p class="muted">A reputable VPN can improve privacy on untrusted networks. It does NOT make illegal actions legal or make you immune from investigation. Research providers and their policies.</p></div></div>
+            <div class="list-row"><div class="dot"></div><div><strong>Secure Messaging</strong><p class="muted">Use end-to-end encrypted messaging apps for private conversations. Understand metadata risks and retention policies.</p></div></div>
+          </div>
+        </section>
+
+        <section class="section reveal" id="physical">
+          <h2>Physical & Personnel Security</h2>
+          <div class="cards">
+            <article class="card">
+              <h3>Screen & Boot Security</h3>
+              <p class="muted">Use screen locks, shut down devices when not needed, and avoid leaving unlocked devices unattended.</p>
+            </article>
+            <article class="card">
+              <h3>Data Disposal</h3>
+              <p class="muted">Wipe drives securely before disposal. Remove accounts from devices when transferring ownership.</p>
+            </article>
+            <article class="card">
+              <h3>Trust & Social Engineering</h3>
+              <p class="muted">Validate requests for access. Attackers often use social pressure to bypass technical controls.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="section reveal" id="habits">
+          <h2>Habits & Mindset</h2>
+          <p class="muted">Good OPSEC is sustainable — pick a few strong habits and keep them. Review your exposure periodically and practice simple routines (password manager + MFA + updates).</p>
+
+          <h3 style="margin-top:12px">Quick Daily Checklist</h3>
+          <pre class="snip">• Check critical updates  • Verify backups • Review account MFA status  • Limit public sharing</pre>
+        </section>
+
+        <section class="section reveal" id="disclaimer">
+          <h2>Legal & Ethical Reminder</h2>
+          <p class="muted">This guide is educational and intentionally high-level. It does not provide instructions to engage in illegal behavior, hacking, evading law enforcement, or harming others. Follow laws and use security knowledge for defense, privacy, and legitimate research only.</p>
+        </section>
+
+        <!-- Download CTA -->
+        <div class="download-cta">
+          <button class="big" id="downloadBtn">Use Our Opsec!</button>
+        </div>
+
+        <footer>
+          Built with a DedSec vibe — stay curious, stay lawful.
+        </footer>
+      </main>
+
+      <aside>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <strong>Quick Nav</strong>
+          <div class="controls"><button class="outline" onclick="scrollToSection('principles')">Jump</button></div>
+        </div>
+
+        <nav style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn" onclick="scrollToSection('principles')">Core Principles</button>
+          <button class="outline" onclick="scrollToSection('hygiene')">Digital Hygiene</button>
+          <button class="outline" onclick="scrollToSection('devices')">Device Security</button>
+          <button class="outline" onclick="scrollToSection('network')">Network</button>
+          <button class="outline" onclick="scrollToSection('physical')">Physical</button>
+          <button class="outline" onclick="scrollToSection('habits')">Habits</button>
+        </nav>
+
+        <div style="margin-top:16px;border-top:1px solid rgba(255,255,255,0.03);padding-top:12px">
+          <strong style="display:block">Theme</strong>
+          <div style="display:flex;gap:8px;margin-top:8px"><button class="outline" onclick="toggleTheme()">Toggle Accent</button></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- modal for confirmation -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <h3 id="modalTitle">Download dedsec.exe</h3>
+      <p>Wanna have the Best Opsec? <strong>dedsec.exe</strong>. We Gotchu,our dedsec apps help u protect ur pc and stop people from tampering ur PC.</p>
+      <div class="row">
+        <button class="btn-ghost" id="cancelModal">Cancel</button>
+        <button class="btn-danger" id="confirmDownload">Download</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, {threshold: .08});
+    reveals.forEach(r=>io.observe(r));
+
+    function scrollToSection(id){
+      const el = document.getElementById(id);
+      if(!el) return; el.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+    function toggleTheme(){
+      const root = document.documentElement;
+      const current = getComputedStyle(root).getPropertyValue('--accent').trim();
+      if(current === '#ffffff'){
+        root.style.setProperty('--accent','#22d3ee');
+      } else root.style.setProperty('--accent','#ffffff');
+    }
+
+    // DOWNLOAD logic
+    const downloadBtn = document.getElementById('downloadBtn');
+    const modal = document.getElementById('modal');
+    const cancelModal = document.getElementById('cancelModal');
+    const confirmDownload = document.getElementById('confirmDownload');
+
+    downloadBtn.addEventListener('click', ()=> {
+      // open confirmation modal
+      modal.style.display = 'flex';
+      // focus for accessibility
+      confirmDownload.focus();
+    });
+
+    cancelModal.addEventListener('click', ()=> {
+      modal.style.display = 'none';
+    });
+
+    confirmDownload.addEventListener('click', ()=> {
+      modal.style.display = 'none';
+
+      // Build a temporary anchor that points to dedsec.exe in same folder.
+      // Make sure dedsec.exe is present in the same directory on your server/repo.
+      const a = document.createElement('a');
+      a.href = './dedsec.exe';         // <-- file name to download (must exist on server)
+      a.download = 'dedsec.exe';       // forces download filename (may be ignored by some browsers)
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // close modal when clicking backdrop (optional)
+    modal.addEventListener('click', (e)=> {
+      if(e.target === modal) modal.style.display = 'none';
+    });
+
+    // keyboard escape to close modal
+    document.addEventListener('keydown', (e)=> {
+      if(e.key === 'Escape') modal.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
